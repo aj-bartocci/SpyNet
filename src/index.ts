@@ -1,6 +1,6 @@
 import { createServer } from './server.js';
 
-const PORT = parseInt(process.env.PORT ?? '8080', 10);
+const PORT = parseInt(process.env.PORT ?? '8675', 10);
 const SESSION_TTL = parseInt(process.env.SESSION_TTL ?? '3600000', 10);
 
 async function main() {

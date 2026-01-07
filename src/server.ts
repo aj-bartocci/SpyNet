@@ -6,7 +6,7 @@ import { EndpointRegistry } from './EndpointRegistry.js';
 import { WebSocketHub } from './WebSocketHub.js';
 
 export interface ServerConfig {
-  port: number;
+  port: number; // Default: 8675
   sessionTTL: number;
 }
 
@@ -239,8 +239,9 @@ export async function createServer(config: ServerConfig): Promise<FastifyInstanc
     return reply.send({ success: true });
   });
 
-  // Store manager for cleanup
+  // Store managers for cleanup and MCP access
   server.decorate('sessionManager', sessionManager);
+  server.decorate('wsHub', wsHub);
 
   server.addHook('onClose', async () => {
     sessionManager.destroy();
