@@ -14,8 +14,8 @@ async function main() {
     });
 
     // Get shared managers from server
-    const sessionManager = (httpServer as any).sessionManager;
-    const wsHub = (httpServer as any).wsHub;
+    const sessionManager = httpServer.sessionManager;
+    const wsHub = httpServer.wsHub;
 
     // Start MCP server on stdio
     await startMCPServer(sessionManager, wsHub);
