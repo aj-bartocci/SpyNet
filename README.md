@@ -18,7 +18,8 @@ npm install
 # Start server
 npm run dev
 
-# Server runs on http://localhost:8080
+# Server runs on http://localhost:8675 (default)
+# Or configure with PORT=8080 npm run dev
 ```
 
 ## Usage
@@ -26,7 +27,7 @@ npm run dev
 ### Configure Mock Endpoint
 
 ```bash
-curl -X POST http://localhost:8080/_mock/sessions/test-1/endpoints \
+curl -X POST http://localhost:8675/_mock/sessions/test-1/endpoints \
   -H "Content-Type: application/json" \
   -d '{
     "method": "GET",
@@ -40,14 +41,14 @@ curl -X POST http://localhost:8080/_mock/sessions/test-1/endpoints \
 ### Request via Data Plane
 
 ```bash
-curl http://localhost:8080/session/test-1/api/users
+curl http://localhost:8675/session/test-1/api/users
 # Returns: [{"id": 1, "name": "Test User"}]
 ```
 
 ### Send WebSocket Message
 
 ```bash
-curl -X POST http://localhost:8080/_mock/sessions/test-1/socket/action \
+curl -X POST http://localhost:8675/_mock/sessions/test-1/socket/action \
   -H "Content-Type: application/json" \
   -d '{"action": "logout", "params": {"reason": "timeout"}}'
 ```
