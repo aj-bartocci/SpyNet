@@ -5,6 +5,13 @@ import { SessionManager } from './SessionManager.js';
 import { EndpointRegistry } from './EndpointRegistry.js';
 import { WebSocketHub } from './WebSocketHub.js';
 
+declare module 'fastify' {
+  interface FastifyInstance {
+    sessionManager: SessionManager;
+    wsHub: WebSocketHub;
+  }
+}
+
 export interface ServerConfig {
   port: number; // Default: 8675
   sessionTTL: number;
