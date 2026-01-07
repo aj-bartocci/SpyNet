@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { createServer } from './server.js';
 import { startMCPServer } from './mcp/server.js';
 
