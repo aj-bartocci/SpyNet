@@ -114,9 +114,12 @@ describe('Server - Data Plane', () => {
 
 describe('Server - WebSocket', () => {
   let server: FastifyInstance;
+  let port: number;
 
   beforeEach(async () => {
-    server = await createServer({ port: 8765, sessionTTL: 3600000 });
+    server = await createServer({ port: 0, sessionTTL: 3600000 });
+    const address = server.server.address();
+    port = typeof address === 'object' && address ? address.port : 0;
   });
 
   afterEach(async () => {
@@ -124,7 +127,7 @@ describe('Server - WebSocket', () => {
   });
 
   it('should accept WebSocket connection', async () => {
-    const ws = new WebSocket('ws://localhost:8765/session/test-1/socket');
+    const ws = new WebSocket(`ws://localhost:${port}/session/test-1/socket`);
 
     await new Promise<void>((resolve) => {
       ws.on('open', () => {
@@ -135,7 +138,7 @@ describe('Server - WebSocket', () => {
   });
 
   it('should send action message to connected client', async () => {
-    const ws = new WebSocket('ws://localhost:8765/session/test-1/socket');
+    const ws = new WebSocket(`ws://localhost:${port}/session/test-1/socket`);
 
     await new Promise<void>((resolve) => {
       ws.on('open', async () => {
@@ -164,7 +167,7 @@ describe('Server - WebSocket', () => {
   });
 
   it('should send data message to connected client', async () => {
-    const ws = new WebSocket('ws://localhost:8765/session/test-1/socket');
+    const ws = new WebSocket(`ws://localhost:${port}/session/test-1/socket`);
 
     await new Promise<void>((resolve) => {
       ws.on('open', async () => {
