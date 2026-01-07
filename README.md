@@ -126,6 +126,41 @@ lsof -ti:8675
 PORT=9000 node dist/mcp.js
 ```
 
+## Using with Claude Code
+
+SpyNet can also be used with Claude Code (CLI) via MCP.
+
+### Setup
+
+1. Build SpyNet:
+   ```bash
+   npm run build
+   ```
+
+2. Add to Claude Code:
+   ```bash
+   # Add for current user (stored in ~/.claude.json)
+   claude mcp add --transport stdio spynet -- node /absolute/path/to/spynet/dist/mcp.js
+
+   # Or add for your team (creates .mcp.json in project)
+   cd /path/to/spynet
+   claude mcp add --transport stdio spynet --scope project -- node ./dist/mcp.js
+   ```
+
+3. Verify it's configured:
+   ```bash
+   claude mcp list
+   ```
+
+### Usage
+
+Same as Claude Desktop - just ask Claude to configure your mocks naturally:
+- "Set up GET /api/users to return 3 test users"
+- "Configure login to fail first, then succeed"
+- "Send a WebSocket logout action to session demo"
+
+The same 8 MCP tools are available. Your app connects to `http://localhost:8675` as usual.
+
 ## API Reference
 
 See [Design Document](docs/plans/2026-01-06-spynet-design.md) for complete API documentation.
