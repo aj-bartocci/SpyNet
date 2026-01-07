@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createServer } from './server.js';
 import type { FastifyInstance } from 'fastify';
+import { WebSocket } from 'ws';
 
 describe('Server - Data Plane', () => {
   let server: FastifyInstance;
@@ -108,5 +109,95 @@ describe('Server - Data Plane', () => {
       url: '/session/session-2/api/test'
     });
     expect(response2.json()).toEqual({ session: 2 });
+  });
+});
+
+describe('Server - WebSocket', () => {
+  let server: FastifyInstance;
+
+  beforeEach(async () => {
+    server = await createServer({ port: 8765, sessionTTL: 3600000 });
+  });
+
+  afterEach(async () => {
+    await server.close();
+  });
+
+  it('should accept WebSocket connection', async () => {
+    const ws = new WebSocket('ws://localhost:8765/session/test-1/socket');
+
+    await new Promise<void>((resolve) => {
+      ws.on('open', () => {
+        ws.close();
+        resolve();
+      });
+    });
+  });
+
+  it('should send action message to connected client', async () => {
+    const ws = new WebSocket('ws://localhost:8765/session/test-1/socket');
+
+    await new Promise<void>((resolve) => {
+      ws.on('open', async () => {
+        // Send action via control API
+        await server.inject({
+          method: 'POST',
+          url: '/_mock/sessions/test-1/socket/action',
+          payload: {
+            action: 'logout',
+            params: { reason: 'timeout' }
+          }
+        });
+      });
+
+      ws.on('message', (data) => {
+        const message = JSON.parse(data.toString());
+        expect(message).toEqual({
+          type: 'action',
+          action: 'logout',
+          params: { reason: 'timeout' }
+        });
+        ws.close();
+        resolve();
+      });
+    });
+  });
+
+  it('should send data message to connected client', async () => {
+    const ws = new WebSocket('ws://localhost:8765/session/test-1/socket');
+
+    await new Promise<void>((resolve) => {
+      ws.on('open', async () => {
+        await server.inject({
+          method: 'POST',
+          url: '/_mock/sessions/test-1/socket/message',
+          payload: {
+            data: { event: 'chat', text: 'Hello' }
+          }
+        });
+      });
+
+      ws.on('message', (data) => {
+        const message = JSON.parse(data.toString());
+        expect(message).toEqual({
+          type: 'data',
+          data: { event: 'chat', text: 'Hello' }
+        });
+        ws.close();
+        resolve();
+      });
+    });
+  });
+
+  it('should return 404 when sending to disconnected session', async () => {
+    const response = await server.inject({
+      method: 'POST',
+      url: '/_mock/sessions/test-1/socket/action',
+      payload: {
+        action: 'logout'
+      }
+    });
+
+    expect(response.statusCode).toBe(404);
   });
 });
