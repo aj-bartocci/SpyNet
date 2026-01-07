@@ -349,13 +349,17 @@ describe('MCP Server Integration', () => {
         method: 'GET',
         path: '/api/users',
         timestamp: new Date(),
-        responseStatus: 200,
+        status: 200,
+        configured: true,
+        responseTime: 10,
       });
       session.requestHistory.push({
         method: 'POST',
         path: '/api/users',
         timestamp: new Date(),
-        responseStatus: 201,
+        status: 201,
+        configured: true,
+        responseTime: 15,
       });
 
       const handler = (mcpServer as any)._requestHandlers.get('tools/call');
@@ -379,7 +383,9 @@ describe('MCP Server Integration', () => {
           method: 'GET',
           path: '/api/test',
           timestamp: new Date(),
-          responseStatus: 200,
+          status: 200,
+          configured: true,
+          responseTime: 10,
         });
       }
 
